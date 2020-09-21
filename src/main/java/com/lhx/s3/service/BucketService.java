@@ -4,11 +4,9 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.util.StringUtils;
 
-import java.net.SocketTimeoutException;
 import java.util.*;
 
 public class BucketService extends BaseService{
-    
     /***
     * @Description: 根据bucket名字创建bucket
     * @Param: [bucketName] 
@@ -20,7 +18,7 @@ public class BucketService extends BaseService{
         Bucket bucket = new Bucket();
         try {
             bucket = amazonS3.createBucket(bucketName);
-//            logger.info("已创建的bucket：" + bucket.getName() + "\t" + bucket.getOwner() + "\t" + StringUtils.fromDate(bucket.getCreationDate()));
+            logger.info("已创建的bucket：" + bucket.getName() + "\t" + bucket.getOwner() + "\t" + StringUtils.fromDate(bucket.getCreationDate()));
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
         }
@@ -172,16 +170,11 @@ public class BucketService extends BaseService{
     public Bucket deleteBucket(String bucketName){
         Bucket bucket = new Bucket();
         try {
-            List<Bucket> buckets = this.getBuckets();
-            for (Bucket bucket1 : buckets) {
-                if(bucket1.getName().equals(bucketName)){
-                    bucket = bucket1;
-                    amazonS3.deleteBucket(bucketName);
-                    logger.info("已删除的bucket：" + bucket.getName() + "\t" + bucket.getOwner() + "\t" + StringUtils.fromDate(bucket.getCreationDate()));
-                    break;
-                }else{
-                    logger.error("要删除的bucket不存在！");
-                }
+            if(this.isBucketExists(bucketName)){
+                amazonS3.deleteBucket(bucketName);
+                logger.info("已删除的bucket：" + bucket.getName() + "\t" + bucket.getOwner() + "\t" + StringUtils.fromDate(bucket.getCreationDate()));
+            }else {
+                logger.error("要删除的bucket不存在！");
             }
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
