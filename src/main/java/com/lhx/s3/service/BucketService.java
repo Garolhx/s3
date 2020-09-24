@@ -167,10 +167,10 @@ public class BucketService extends BaseService{
     * @Author: Garo
     * @Date: 2020/7/9
     */
-    public Bucket deleteBucket(String bucketName){
+    public void deleteBucket(String bucketName){
         Bucket bucket = new Bucket();
         try {
-            if(this.isBucketExists(bucketName)){
+            if(isBucketExists(bucketName)){
                 amazonS3.deleteBucket(bucketName);
                 logger.info("已删除的bucket：" + bucket.getName() + "\t" + bucket.getOwner() + "\t" + StringUtils.fromDate(bucket.getCreationDate()));
             }else {
@@ -179,7 +179,6 @@ public class BucketService extends BaseService{
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
         }
-        return bucket;
     }
 
     /***
@@ -190,7 +189,7 @@ public class BucketService extends BaseService{
     * @Date: 2020/7/9
     */
     public boolean isBucketExists(String bucketName){
-        List<Bucket> buckets = this.getBuckets();
+        List<Bucket> buckets = getBuckets();
         for (Bucket bucket : buckets) {
             return bucket.getName().equals(bucketName);
         }

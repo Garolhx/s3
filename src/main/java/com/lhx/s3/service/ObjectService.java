@@ -1,8 +1,10 @@
 package com.lhx.s3.service;
 
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.StringUtils;
 
 import java.io.File;
+import java.util.List;
 
 public class ObjectService extends BucketService{
 
@@ -13,10 +15,8 @@ public class ObjectService extends BucketService{
     * @Author: Garo
     * @Date: 2020/9/15
     */
-    public S3ObjectSummary createObject(String bucketName, String objectName, File file){
-        S3ObjectSummary object = new S3ObjectSummary();
-        amazonS3.putObject(bucketName, objectName, file);
-        return object;
+    public PutObjectResult createObject(String bucketName, String objectName, File file){
+        return amazonS3.putObject(bucketName, objectName, file);
     }
 
     /**
@@ -27,16 +27,46 @@ public class ObjectService extends BucketService{
     * @Date: 2020/9/15
     */
     public ObjectListing getObjects(String bucketName){
-        ObjectListing objects = new ObjectListing();
-        objects = amazonS3.listObjects(bucketName);
-        return objects;
+        return amazonS3.listObjects(bucketName);
     }
 
-    public void deleteObject(String objectName){
-
+    /**
+    * @Description: 获取指定对象
+    * @Param: [bucketName, objectName]
+    * @return: com.amazonaws.services.s3.model.S3Object
+    * @Author: Garo
+    * @Date: 2020/9/22
+    */
+    public S3Object getObject(String bucketName, String objectName){
+        return amazonS3.getObject(bucketName, objectName);
     }
 
-    public boolean isObjectExists(String objectName){
+    /**
+    * @Description: 根据object名字删除object
+    * @Param: [bucketName, objectName]
+    * @return: void
+    * @Author: Garo
+    * @Date: 2020/9/24
+    */
+    public void deleteObject(String bucketName, String objectName){
+
+        try {
+            if(isObjectExists(bucketName, objectName)){
+                amazonS3.deleteObject(bucketName, objectName);
+                logger.info("已删除的object");
+            }else {
+                logger.error("要删除的object不存在！");
+            }
+        } catch (AmazonS3Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isObjectExists(String bucketName, String objectName){
+        ObjectListing objects = getObjects(bucketName);
+        for(S3ObjectSummary objectSummary : objects.getObjectSummaries()){
+            return objectSummary.getKey().equals(objectName);
+        };
         return false;
     }
 }
