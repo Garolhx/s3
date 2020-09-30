@@ -24,7 +24,7 @@ public class BucketService extends BaseService{
         }
         return bucket;
     }
-
+    
     /***
     * @Description: 查询全部bucket列表
     * @Param: []

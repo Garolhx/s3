@@ -62,6 +62,13 @@ public class ObjectService extends BucketService{
         }
     }
 
+    /**
+    * @Description: 检查object是否存在
+    * @Param: [bucketName, objectName]
+    * @return: boolean
+    * @Author: Garo
+    * @Date: 2020/9/24
+    */
     public boolean isObjectExists(String bucketName, String objectName){
         ObjectListing objects = getObjects(bucketName);
         for(S3ObjectSummary objectSummary : objects.getObjectSummaries()){
